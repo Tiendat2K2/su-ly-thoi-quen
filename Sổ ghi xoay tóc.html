@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sổ ghi xoay tóc</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f6;--card:#fff;--ink:#1f2a44;--mut:#6b7691;--acc:#2f7f86;--acc-ink:#fff;--line:#d9e0ea;--bar:#9cc7cb;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a2b;--card:#1b2540;--ink:#e8edf7;--mut:#93a0bf;--acc:#5bb5bc;--acc-ink:#0f1a2b;--line:#2c3961;--bar:#2f6d73}}
+:root[data-theme="dark"]{--bg:#121a2b;--card:#1b2540;--ink:#e8edf7;--mut:#93a0bf;--acc:#5bb5bc;--acc-ink:#0f1a2b;--line:#2c3961;--bar:#2f6d73}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Be Vietnam Pro",system-ui,sans-serif;line-height:1.5}
+main{max-width:520px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.35rem;margin:0 0 4px}
+.sub{color:var(--mut);margin:0 0 20px;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.stats{display:flex;gap:10px;margin-bottom:14px}
+.stat{flex:1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+.stat b{display:block;font-size:1.8rem;line-height:1.1}
+.stat span{color:var(--mut);font-size:.8rem}
+label{font-weight:500;font-size:.95rem;display:block;margin-bottom:8px}
+input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
+input:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
+.chip{font:inherit;font-size:.85rem;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 11px;cursor:pointer}
+.chip:hover{border-color:var(--acc)}
+.add{width:100%;font:inherit;font-size:1.15rem;font-weight:700;color:var(--acc-ink);background:var(--acc);border:0;border-radius:12px;padding:16px;cursor:pointer;transition:transform .1s}
+.add:active{transform:scale(.98)}
+.bars{display:flex;align-items:flex-end;gap:8px;height:90px;margin-top:6px}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:.75rem;color:var(--mut)}
+.col i{display:block;width:100%;background:var(--bar);border-radius:6px 6px 0 0;min-height:2px}
+.col.today i{background:var(--acc)}
+.log{list-style:none;margin:0;padding:0}
+.log li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.log li:first-child{border-top:0}
+.time{color:var(--mut);font-size:.8rem;white-space:nowrap;min-width:92px}
+.what{flex:1;word-break:break-word}
+.what em{color:var(--mut);font-style:normal}
+.del{font:inherit;background:none;border:0;color:var(--mut);cursor:pointer;padding:2px 6px;font-size:1.1rem}
+.empty{color:var(--mut);margin:0}
+.top{display:flex;justify-content:space-between;align-items:center}
+.ghost{font:inherit;font-size:.8rem;color:var(--mut);background:none;border:0;cursor:pointer;text-decoration:underline}
+h2{font-size:1rem;margin:0 0 8px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Sổ ghi xoay tóc</h1>
+  <p class="sub">Mỗi lần xoay tóc, ghi lại đang làm gì để nhận ra thói quen.</p>
+
+  <div class="stats">
+    <div class="stat"><b id="today">0</b><span>Hôm nay</span></div>
+    <div class="stat"><b id="week">0</b><span>7 ngày qua</span></div>
+    <div class="stat"><b id="total">0</b><span>Tổng cộng</span></div>
+  </div>
+
+  <div class="card">
+    <label for="note">Bạn đang làm gì?</label>
+    <input type="text" id="note" placeholder="Ví dụ: xem điện thoại, học bài, lo lắng..." autocomplete="off">
+    <div class="chips" id="chips"></div>
+    <button class="add" id="add">+1 Vừa xoay tóc</button>
+  </div>
+
+  <div class="card">
+    <h2>7 ngày gần nhất</h2>
+    <div class="bars" id="bars"></div>
+  </div>
+
+  <div class="card">
+    <div class="top"><h2>Nhật ký</h2><button class="ghost" id="clear">Xóa tất cả</button></div>
+    <p class="empty" id="empty">Chưa có lần nào. Nhấn nút +1 khi bạn xoay tóc.</p>
+    <ul class="log" id="log"></ul>
+  </div>
+
+  <div class="card" id="topcard" hidden>
+    <h2>Hay xoay tóc khi nào nhất</h2>
+    <ul class="log" id="top"></ul>
+  </div>
+</main>
+
+<script>
+(function(){
+  var KEY="xoay-toc-v1", entries=[];
+  var QUICK=["Xem điện thoại","Học bài","Làm việc","Xem phim","Lo lắng","Chán","Suy nghĩ","Nói chuyện"];
+  function load(){try{var r=localStorage.getItem(KEY);entries=r?JSON.parse(r):[]}catch(e){entries=[]}}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(entries))}catch(e){}}
+  function $(id){return document.getElementById(id)}
+  function dayKey(d){return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()}
+  function fmt(t){var d=new Date(t),p=function(n){return n<10?"0"+n:n};
+    var same=dayKey(d)===dayKey(new Date());
+    return p(d.getHours())+":"+p(d.getMinutes())+(same?"":" · "+p(d.getDate())+"/"+p(d.getMonth()+1))}
+  function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
+
+  function render(){
+    var now=new Date(),tk=dayKey(now),today=0,week=0,counts={},days=[],i;
+    for(i=6;i>=0;i--){var d=new Date(now);d.setDate(now.getDate()-i);days.push({k:dayKey(d),label:["CN","T2","T3","T4","T5","T6","T7"][d.getDay()],n:0})}
+    entries.forEach(function(e){
+      var k=dayKey(new Date(e.t));
+      if(k===tk)today++;
+      days.forEach(function(x){if(x.k===k){x.n++;week++}});
+      var key=(e.note||"").trim().toLowerCase();
+      if(key)counts[key]=(counts[key]||0)+1;
+    });
+    $("today").textContent=today;$("week").textContent=week;$("total").textContent=entries.length;
+
+    var max=Math.max.apply(null,days.map(function(x){return x.n}).concat([1]));
+    $("bars").innerHTML=days.map(function(x,idx){
+      return '<div class="col'+(idx===6?' today':'')+'"><span>'+(x.n||"")+'</span><i style="height:'+Math.round(x.n/max*60)+'px"></i><span>'+x.label+'</span></div>'}).join("");
+
+    $("empty").hidden=entries.length>0;
+    $("log").innerHTML=entries.slice().reverse().slice(0,60).map(function(e){
+      return '<li><span class="time">'+fmt(e.t)+'</span><span class="what">'+(e.note?esc(e.note):'<em>Không ghi chú</em>')+'</span><button class="del" data-t="'+e.t+'" aria-label="Xóa lần này">×</button></li>'}).join("");
+
+    var arr=Object.keys(counts).map(function(k){return[k,counts[k]]}).sort(function(a,b){return b[1]-a[1]}).slice(0,5);
+    $("topcard").hidden=arr.length===0;
+    $("top").innerHTML=arr.map(function(a){return '<li><span class="what">'+esc(a[0])+'</span><span class="time" style="text-align:right">'+a[1]+' lần</span></li>'}).join("");
+  }
+
+  $("chips").innerHTML=QUICK.map(function(q){return '<button type="button" class="chip">'+q+'</button>'}).join("");
+  $("chips").addEventListener("click",function(ev){
+    if(ev.target.classList.contains("chip")){$("note").value=ev.target.textContent;$("note").focus()}
+  });
+  function add(){
+    entries.push({t:Date.now(),note:$("note").value.trim()});
+    save();$("note").value="";render();
+    if(navigator.vibrate){try{navigator.vibrate(30)}catch(e){}}
+  }
+  $("add").addEventListener("click",add);
+  $("note").addEventListener("keydown",function(e){if(e.key==="Enter")add()});
+  $("log").addEventListener("click",function(ev){
+    var t=ev.target.getAttribute&&ev.target.getAttribute("data-t");
+    if(t){entries=entries.filter(function(e){return String(e.t)!==t});save();render()}
+  });
+  $("clear").addEventListener("click",function(){
+    entries=[];save();render()
+  });
+  load();render();
+})();
+</script>
+</body>
+</html>
